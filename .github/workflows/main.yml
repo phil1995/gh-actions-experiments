@@ -23,7 +23,6 @@ jobs:
         run: |
           echo "Free space:"
           df -h
-          sudo apt install curl
-          curl -O https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz
+          wget https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz 2>/tmp/err.log || cat /tmp/err.log; rm /tmp/err.log
           mongorestore -host="127.0.0.1" --port="27017" --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
           echo "Finished importing"
