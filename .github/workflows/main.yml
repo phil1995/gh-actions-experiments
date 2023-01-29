@@ -4,7 +4,7 @@ on: push
 jobs:
   build:
     name: Build my artifact
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -19,18 +19,11 @@ jobs:
         uses: supercharge/mongodb-github-action@1.8.0
         with:
           mongodb-version: '6.0'
-      - name: Install mongosh
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget gnupg
-          wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-          sudo apt-get update
-          sudo apt-get install -y mongodb-mongosh
       - name: Build
         run: |
           echo "Free space:"
           df -h
-          wget https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz -q --show-progress
+          sudo apt install curl
+          curl https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz
           mongorestore -host="127.0.0.1" --port="27017" --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
           echo "Finished importing"
