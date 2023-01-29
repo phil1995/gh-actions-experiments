@@ -14,8 +14,15 @@ jobs:
           remove-dotnet: 'true'
       - name: Checkout
         uses: actions/checkout@v2
-
+      
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: '6.0'
       - name: Build
         run: |
           echo "Free space:"
           df -h
+          wget https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz
+          mongorestore --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
+          echo "Finished importing"
