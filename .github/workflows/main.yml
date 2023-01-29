@@ -1,4 +1,4 @@
-name: My build action requiring more space
+name: Experiments
 on: push
 
 jobs:
@@ -24,5 +24,5 @@ jobs:
           echo "Free space:"
           df -h
           wget https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz 2>/tmp/err.log || cat /tmp/err.log; rm /tmp/err.log
-          mongorestore -host="127.0.0.1" --port="27017" --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
+          mongorestore --host="127.0.0.1" --port="27017" --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
           echo "Finished importing"
