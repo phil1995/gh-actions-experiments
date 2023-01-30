@@ -15,15 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Retrieve Checksum
+        id: get-checksum
         run: |
           wget https://static.openfoodfacts.org/data/sha256sum
-          echo cat sha256sum >> $GITHUB_OUTPUT
+          echo "sha256sum=$(cat sha256sum)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         with:
           path: |
             sha256sum
             openfoodfacts-products.jsonl.gz 
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/sha256sum') }}
+          key: ${{ runner.os }}-${{ steps.get-checksum.outputs.sha256sum }}
       - name: Build
         run: |
           echo "Free space:"
