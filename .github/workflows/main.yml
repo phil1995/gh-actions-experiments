@@ -17,8 +17,7 @@ jobs:
       - name: Retrieve Checksum
         run: |
           wget https://static.openfoodfacts.org/data/sha256sum
-          export CHECKSUM=cat sha256sum
-          echo "::set-env name=CHECKSUM::$CHECKSUM"
+          echo cat sha256sum >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         with:
           path: |
