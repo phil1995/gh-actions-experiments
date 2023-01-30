@@ -14,15 +14,25 @@ jobs:
           remove-dotnet: 'true'
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.8.0
+      - name: Retrieve Checksum
+        run: |
+          wget https://static.openfoodfacts.org/data/sha256sum
+          export CHECKSUM=cat sha256sum
+          echo "::set-env name=CHECKSUM::$CHECKSUM"
+      - uses: actions/cache@v3
         with:
-          mongodb-version: '6.0'
+          path: |
+            sha256sum
+            openfoodfacts-products.jsonl.gz 
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/sha256sum') }}
       - name: Build
         run: |
           echo "Free space:"
           df -h
-          wget https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.tar.gz 2>/tmp/err.log || cat /tmp/err.log; rm /tmp/err.log
-          mongorestore --host="127.0.0.1" --port="27017" --gzip --archive="openfoodfacts-mongodbdump.tar.gz"
+          git pull https://github.com/phil1995/OpenFoodFactsSmallGenerator.git
+          cd OpenFoodFactsSmallGenerator
+          wget https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz 2>/tmp/err.log || cat /tmp/err.log; rm /tmp/err.log
+          gunzip openfoodfacts-products.jsonl.gz
+          swift run
+          du -h german.json
           echo "Finished importing"
